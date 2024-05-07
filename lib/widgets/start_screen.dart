@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/constant/poke_style.dart';
+import 'package:pokemons/logic/api/repository/repository.dart';
 import 'package:pokemons/logic/bloc.dart';
 
 class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
-
+  StartScreen({super.key, required this.pokemonRepository});
+  final PokemonRepository pokemonRepository;
+  int index = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,29 +26,12 @@ class StartScreen extends StatelessWidget {
         padding: const EdgeInsets.all(9),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilledButton(
-                  style: PokeStyle.button,
-                  onPressed: () {},
-                  child: const Text('Previous'),
-                ),
-                const SizedBox(
-                  width: 40,
-                ),
-                FilledButton(
-                  style: PokeStyle.button,
-                  onPressed: () {},
-                  child: const Text('Next'),
-                ),
-              ],
-            ),
+            _NavigateButtons(context),
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisExtent: 100,
+                  mainAxisExtent: 150,
                 ),
                 itemCount: 20,
                 itemBuilder: (context, index) => _Card(index),
@@ -55,6 +40,39 @@ class StartScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  Row _NavigateButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        FilledButton(
+          style: PokeStyle.button,
+          onPressed: () {
+            if (index >= 20) {
+              index -= 20;
+              return (context.read<ApiBloc>().add(
+                    GetUrlEvent(index),
+                  ));
+            }
+          },
+          child: const Text('Previous'),
+        ),
+        const SizedBox(
+          width: 40,
+        ),
+        FilledButton(
+          style: PokeStyle.button,
+          onPressed: () {
+            index += 20;
+            return context.read<ApiBloc>().add(
+                  GetUrlEvent(index),
+                );
+          },
+          child: const Text('Next'),
+        ),
+      ],
     );
   }
 }
@@ -104,6 +122,9 @@ class _BlocColumn extends StatelessWidget {
       builder: (context, state) {
         if (state is SuccessState) {
           final pokemonInfo = (state.fullInfo);
+          final urlImageString = pokemonInfo.pokemonApi.results[index].url;
+          final Uri url = Uri.parse(urlImageString);
+          final imageId = url.pathSegments[3];
 
           return Center(
             child: Column(
@@ -114,6 +135,9 @@ class _BlocColumn extends StatelessWidget {
                     pokemonInfo.pokemonApi.results[index].name,
                     style: PokeStyle.name,
                   ),
+                ),
+                Image.network(
+                  'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
                 ),
               ],
             ),

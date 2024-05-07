@@ -13,8 +13,8 @@ class PokemonApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: BlocProvider(
-        create: (context) => ApiBloc(pokemonRepository)..add(GetUrlEvent()),
-        child: const StartScreen(),
+        create: (context) => ApiBloc(pokemonRepository)..add(GetUrlEvent(0)),
+        child: StartScreen(pokemonRepository: pokemonRepository),
       ),
     );
   }

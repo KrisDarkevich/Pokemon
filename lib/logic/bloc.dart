@@ -11,11 +11,17 @@ class SuccessState extends ApiState {
 
 class ErrorState extends ApiState {}
 
+class LoadingState extends ApiState {}
+
 class InitialState extends ApiState {}
 
 abstract class ApiEvent {}
 
-class GetUrlEvent extends ApiEvent {}
+class GetUrlEvent extends ApiEvent {
+  final int offset;
+
+  GetUrlEvent(this.offset);
+}
 
 class ApiBloc extends Bloc<ApiEvent, ApiState> {
   final PokemonRepository pokemonRepository;
@@ -23,7 +29,8 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
   ApiBloc(this.pokemonRepository) : super(InitialState()) {
     on<GetUrlEvent>(
       (event, emit) async {
-        final result = await pokemonRepository.getInfo();
+        emit(LoadingState());
+        final result = await pokemonRepository.getInfo(event.offset);
 
         emit(SuccessState(result));
       },

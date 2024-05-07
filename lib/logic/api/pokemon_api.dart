@@ -1,21 +1,15 @@
 class PokemonApi {
   final int count;
-  final String? next;
-  final String? previous;
   final List<Results> results;
 
   PokemonApi(
     this.count,
-    this.next,
-    this.previous,
     this.results,
   );
 
   factory PokemonApi.fromJson(Map<String, dynamic> json) {
     return PokemonApi(
       json['count'] as int,
-      json['next'] as String?,
-      json['previous'] as String?,
       List<Results>.from(
         json['results'].map(
           (e) => Results.fromJson(e),
@@ -50,12 +44,3 @@ class Results {
     );
   }
 }
-
-// class ListResults{
-//   final Results results;
-
-//   ListResults(this.results);
-
-//   factory ListResults.fromJson(Map<String, dynamic> json){return}
-// }
-// substring, regexp, split,
