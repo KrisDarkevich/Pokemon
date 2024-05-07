@@ -5,10 +5,18 @@ import 'package:pokemons/constant/poke_style.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
 import 'package:pokemons/logic/bloc.dart';
 
-class StartScreen extends StatelessWidget {
-  StartScreen({super.key, required this.pokemonRepository});
+class StartScreen extends StatefulWidget {
+  const StartScreen({super.key, required this.pokemonRepository});
   final PokemonRepository pokemonRepository;
+
+  @override
+  State<StartScreen> createState() => _StartScreenState();
+}
+
+class _StartScreenState extends State<StartScreen> {
+  final TextEditingController _controller = TextEditingController();
   int index = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +34,15 @@ class StartScreen extends StatelessWidget {
         padding: const EdgeInsets.all(9),
         child: Column(
           children: [
-            _NavigateButtons(context),
+            TextFormField(
+              controller: _controller,
+              decoration: InputDecoration(
+                label: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+            ),
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -37,42 +53,39 @@ class StartScreen extends StatelessWidget {
                 itemBuilder: (context, index) => _Card(index),
               ),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FilledButton(
+                  style: PokeStyle.button,
+                  onPressed: () {
+                    if (index >= 20) {
+                      index -= 20;
+                      return (context.read<ApiBloc>().add(
+                            GetUrlEvent(index),
+                          ));
+                    }
+                  },
+                  child: const Text('Previous'),
+                ),
+                const SizedBox(
+                  width: 40,
+                ),
+                FilledButton(
+                  style: PokeStyle.button,
+                  onPressed: () {
+                    index += 20;
+                    return context.read<ApiBloc>().add(
+                          GetUrlEvent(index),
+                        );
+                  },
+                  child: const Text('Next'),
+                ),
+              ],
+            ),
           ],
         ),
       ),
-    );
-  }
-
-  Row _NavigateButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FilledButton(
-          style: PokeStyle.button,
-          onPressed: () {
-            if (index >= 20) {
-              index -= 20;
-              return (context.read<ApiBloc>().add(
-                    GetUrlEvent(index),
-                  ));
-            }
-          },
-          child: const Text('Previous'),
-        ),
-        const SizedBox(
-          width: 40,
-        ),
-        FilledButton(
-          style: PokeStyle.button,
-          onPressed: () {
-            index += 20;
-            return context.read<ApiBloc>().add(
-                  GetUrlEvent(index),
-                );
-          },
-          child: const Text('Next'),
-        ),
-      ],
     );
   }
 }
