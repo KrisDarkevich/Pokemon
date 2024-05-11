@@ -1,62 +1,60 @@
 import 'package:flutter/material.dart';
+import 'package:pokemons/constant/poke_color.dart';
+import 'package:pokemons/logic/api/repository/repository.dart';
+import 'package:pokemons/widgets/random_screen.dart';
+import 'package:pokemons/widgets/start_screen.dart';
 
 class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+  final PokemonRepository pokemonRepository;
+
+  const BottomBar({super.key, required this.pokemonRepository});
 
   @override
   State<BottomBar> createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Index 0: Home',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
+  final ValueNotifier<int> _index = ValueNotifier<int>(0);
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    _index.value = index;
+  }
+
+  @override
+  void dispose() {
+    _index.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+    return ValueListenableBuilder<int>(
+      valueListenable: _index,
+      builder: (_, int value, __) {
+        return Scaffold(
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: value,
+            selectedItemColor: PokeColor.red,
+            onTap: _onItemTapped,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.question_mark),
+                label: 'Random',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
+          body: Center(
+            child: [
+              const StartScreen(),
+              RandomScreen(),
+            ].elementAt(value),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
-      ),
+        );
+      },
     );
   }
 }

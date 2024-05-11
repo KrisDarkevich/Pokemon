@@ -9,9 +9,9 @@ class ApiCall {
 
   ApiCall(this.client);
 
-  Future<PokemonApi> getPokeList(int offset) async {
+  Future<PokemonApi> getPokeList(int offset, int limit) async {
     final response = await http.get(
-      Uri.parse('$domain/pokemon/?offset=$offset'),
+      Uri.parse('$domain/pokemon/?offset=$offset&limit=$limit'),
     );
 
     final json = jsonDecode(response.body);

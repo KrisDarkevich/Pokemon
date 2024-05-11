@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/constant/poke_style.dart';
-import 'package:pokemons/logic/api/repository/repository.dart';
 import 'package:pokemons/logic/bloc.dart';
 
 class StartScreen extends StatefulWidget {
-  const StartScreen({super.key, required this.pokemonRepository});
-  final PokemonRepository pokemonRepository;
+  const StartScreen({super.key});
 
   @override
   State<StartScreen> createState() => _StartScreenState();
@@ -18,11 +16,17 @@ class _StartScreenState extends State<StartScreen> {
   int index = 0;
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Pokemon',
+          'Pokemon list',
           style: TextStyle(
             color: PokeColor.white,
           ),
@@ -32,25 +36,25 @@ class _StartScreenState extends State<StartScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(9),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _controller,
-              decoration: InputDecoration(
-                label: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
+        child: BlocBuilder<ApiBloc, ApiState>(builder: (context, state) {
+          if (state is SuccessState) {
+            return Column(
+              children: [
+                TextFormField(
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    label: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onFieldSubmitted: (query) {
+                    context.read<ApiBloc>().add(
+                          SearchEvent(query),
+                        );
+                  },
                 ),
-              ),
-              onFieldSubmitted: (query) {
-                context.read<ApiBloc>().add(
-                      SearchEvent(query),
-                    );
-              },
-            ),
-            BlocBuilder<ApiBloc, ApiState>(builder: (context, state) {
-              if (state is SuccessState) {
-                return Expanded(
+                Expanded(
                   child: GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -102,45 +106,49 @@ class _StartScreenState extends State<StartScreen> {
                           ),
                         );
                       }),
-                );
-              } else {
-                return const CircularProgressIndicator(
-                  color: PokeColor.darkRed,
-                );
-              }
-            }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FilledButton(
-                  style: PokeStyle.button,
-                  onPressed: () {
-                    if (index >= 20) {
-                      index -= 20;
-                      return context.read<ApiBloc>().add(
-                            GetUrlEvent(index),
-                          );
-                    }
-                  },
-                  child: const Text('Previous'),
                 ),
-                const SizedBox(
-                  width: 40,
-                ),
-                FilledButton(
-                  style: PokeStyle.button,
-                  onPressed: () {
-                    index += 20;
-                    return context.read<ApiBloc>().add(
-                          GetUrlEvent(index),
-                        );
-                  },
-                  child: const Text('Next'),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FilledButton(
+                      style: index < 20
+                          ? PokeStyle.blockedButton
+                          : PokeStyle.button,
+                      onPressed: () {
+                        if (index >= 20) {
+                          index -= 20;
+                          return context.read<ApiBloc>().add(
+                                GetUrlEvent(index, 20),
+                              );
+                        }
+                      },
+                      child: const Icon(Icons.arrow_back_ios),
+                    ),
+                    const SizedBox(
+                      width: 200,
+                    ),
+                    FilledButton(
+                      style: PokeStyle.button,
+                      onPressed: () {
+                        index += 20;
+                        return context.read<ApiBloc>().add(
+                              GetUrlEvent(index, 20),
+                            );
+                      },
+                      child: const Icon(Icons.arrow_forward_ios),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ],
-        ),
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: PokeColor.darkRed,
+              ),
+            );
+          }
+        }),
       ),
     );
   }

@@ -10,4 +10,7 @@ abstract class PokeStyle {
   static const button = ButtonStyle(
     backgroundColor: MaterialStatePropertyAll<Color>(PokeColor.red),
   );
+  static const blockedButton = ButtonStyle(
+    backgroundColor: MaterialStatePropertyAll<Color>(PokeColor.greyRed),
+  );
 }

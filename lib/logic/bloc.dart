@@ -20,8 +20,9 @@ abstract class ApiEvent {}
 
 class GetUrlEvent extends ApiEvent {
   final int offset;
+  final int limit;
 
-  GetUrlEvent(this.offset);
+  GetUrlEvent(this.offset, this.limit);
 }
 
 class SearchEvent extends ApiEvent {
@@ -39,7 +40,8 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
       (event, emit) async {
         emit(LoadingState());
         _results.clear();
-        final result = await pokemonRepository.getInfo(event.offset);
+        final result =
+            await pokemonRepository.getInfo(event.offset, event.limit);
         _results.addAll(result.pokemonApi.results);
 
         emit(SuccessState(result));

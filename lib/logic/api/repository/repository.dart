@@ -6,8 +6,8 @@ class PokemonRepository {
 
   PokemonRepository(this.apiCall);
 
-  Future<FullInfo> getInfo(int offset) async {
-    final pokeList = await apiCall.getPokeList(offset);
+  Future<FullInfo> getInfo(int offset, int limit) async {
+    final pokeList = await apiCall.getPokeList(offset, limit);
     final onePoke = await apiCall.getInfoOfOne();
     return FullInfo(onePoke, pokeList);
   }
