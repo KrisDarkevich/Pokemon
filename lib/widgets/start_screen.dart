@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/constant/poke_style.dart';
+import 'package:pokemons/logic/api/pokemon_api.dart';
+import 'package:pokemons/logic/api/repository/database.dart';
 import 'package:pokemons/logic/bloc.dart';
 
 class StartScreen extends StatefulWidget {
@@ -14,6 +16,16 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
   final TextEditingController _controller = TextEditingController();
   int index = 0;
+  late Future<List<Results>> pokemons;
+  late PokeDatabase pokeDatabase;
+
+  @override
+  void initState() {
+    super.initState();
+
+    pokeDatabase = PokeDatabase.instance;
+    pokemons = pokeDatabase.allPokemon();
+  }
 
   @override
   void dispose() {

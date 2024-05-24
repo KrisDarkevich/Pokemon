@@ -43,4 +43,16 @@ class Results {
       json['url'] as String,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'url': url,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'Results{name: $name, url: $url}';
+  }
 }

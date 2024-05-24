@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/logic/api/pokemon_api.dart';
+import 'package:pokemons/logic/api/repository/database.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
 
 abstract class ApiState {}
@@ -34,8 +35,9 @@ class SearchEvent extends ApiEvent {
 class ApiBloc extends Bloc<ApiEvent, ApiState> {
   final PokemonRepository pokemonRepository;
   final List<Results> _results = [];
+  final PokeDatabase pokeDatabase;
 
-  ApiBloc(this.pokemonRepository) : super(InitialState()) {
+  ApiBloc(this.pokemonRepository, this.pokeDatabase) : super(InitialState()) {
     on<GetUrlEvent>(
       (event, emit) async {
         emit(LoadingState());
@@ -43,7 +45,17 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
         final result =
             await pokemonRepository.getInfo(event.offset, event.limit);
         _results.addAll(result.pokemonApi.results);
-
+        for (var result in _results) {
+          final existingPokemon =
+              await pokeDatabase.getPokemonByName(result.name);
+          if (existingPokemon == null) {
+            await pokeDatabase.insertPokemon(result);
+          }
+        }
+        List<Results> pokemons = await pokeDatabase.getAllPokemons();
+        for (var pokemon in pokemons) {
+          print(pokemon);
+        }
         emit(SuccessState(result));
       },
     );

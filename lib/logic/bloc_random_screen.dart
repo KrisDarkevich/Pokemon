@@ -27,6 +27,7 @@ class GetRandomPokeEvent extends RandomEvent {
 
 class RandomBloc extends Bloc<RandomEvent, RandomState> {
   final PokemonRepository pokemonRepository;
+  
 
   RandomBloc(this.pokemonRepository) : super(InitialRandomState()) {
     on<GetRandomPokeEvent>(
