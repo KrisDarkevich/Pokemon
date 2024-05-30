@@ -110,8 +110,26 @@ class _StartScreenState extends State<StartScreen> {
                                       style: PokeStyle.name,
                                     ),
                                   ),
-                                  Image.network(
-                                    'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
+                                  CachedNetworkImage(
+                                    imageUrl:
+                                        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(
+                                      color: PokeColor.darkRed,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.error,
+                                          color: PokeColor.greyRed,
+                                        ),
+                                        Text(
+                                          'Image are not cached',
+                                          style: PokeStyle.noInternetImage,
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -150,80 +168,6 @@ class _StartScreenState extends State<StartScreen> {
                         child: const Icon(Icons.arrow_forward_ios),
                       ),
                     ],
-                  ),
-                ],
-              );
-            } else if (state is NoInternetSuccessState) {
-              return Column(
-                children: [
-                  TextFormField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      label: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    onFieldSubmitted: (query) {
-                      context.read<ApiBloc>().add(
-                            SearchEvent(query),
-                          );
-                    },
-                  ),
-                  Expanded(
-                    child: GridView.builder(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisExtent: 150,
-                        ),
-                        itemCount: state.results.length,
-                        itemBuilder: (context, index) {
-                          final pokemonInfo = (state.results);
-                          final urlImageString = pokemonInfo[index].url;
-                          final Uri url = Uri.parse(urlImageString);
-                          final imageId = url.pathSegments[3];
-
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 10,
-                              horizontal: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: PokeColor.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: PokeColor.greyBlue.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 6,
-                                  offset: const Offset(5, 4),
-                                ),
-                              ],
-                            ),
-                            child: Center(
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        pokemonInfo[index].name,
-                                        style: PokeStyle.name,
-                                      ),
-                                    ),
-                                    const Flexible(
-                                      child: Text(
-                                        'Image are not avalible',
-                                        style: PokeStyle.noInternetImage,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
                   ),
                 ],
               );

@@ -9,7 +9,7 @@ abstract class PokeStyle {
   );
   static const noInternetImage = TextStyle(
     fontSize: 15,
-    color: Color.fromARGB(255, 94, 64, 64),
+    color: PokeColor.greyRed,
   );
   static const button = ButtonStyle(
     backgroundColor: MaterialStatePropertyAll<Color>(PokeColor.red),

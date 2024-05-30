@@ -48,16 +48,6 @@ class PokeDatabase {
         .toList();
   }
 
-  Future<int> update(Results pokemon) async {
-    final db = await instance.database;
-    return db.update(
-      'pokemons',
-      pokemon.toMap(),
-      where: 'name = ?',
-      whereArgs: [pokemon.name],
-    );
-  }
-
   Future<Results?> getPokemonByName(String name) async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(

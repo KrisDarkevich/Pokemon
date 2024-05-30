@@ -50,7 +50,6 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
         emit(LoadingState());
         final connectivityResult = await Connectivity().checkConnectivity();
         bool hasInternet = connectivityResult != ConnectivityResult.none;
-        bool noInternet = connectivityResult == ConnectivityResult.none;
 
         if (hasInternet) {
           _results.clear();
@@ -64,15 +63,14 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
               await pokeDatabase.insertPokemon(result);
             }
           }
-          List<Results> pokemons = await pokeDatabase.getAllPokemons();
-          for (var pokemon in pokemons) {}
           emit(SuccessState(result));
-        } else if (noInternet) {
-          final cachedResults = await pokeDatabase.getAllPokemons();
+        } else if (!hasInternet) {
+          final cachedResults =
+              await pokeDatabase.getPokemons(event.offset, event.limit);
           _results.addAll(cachedResults);
-          emit(
-            NoInternetSuccessState(_results),
-          );
+          final pokemonApi = PokemonApi(cachedResults.length, cachedResults);
+          final fullInfo = FullInfo(null, pokemonApi);
+          emit(SuccessState(fullInfo));
         } else {
           emit(ErrorState());
         }
@@ -98,7 +96,6 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
               satisfyingPokemons.add(res);
             }
           }
-
           emit(
             SuccessState(
               FullInfo(
