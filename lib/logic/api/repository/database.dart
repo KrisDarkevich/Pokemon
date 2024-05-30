@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:pokemons/logic/api/pokemon_api.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -86,6 +85,17 @@ class PokeDatabase {
   Future<List<Results>> getAllPokemons() async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query('pokemons');
+
+    return maps.map((map) => Results.fromJson(map)).toList();
+  }
+
+  Future<List<Results>> getPokemons(int offset, int limit) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'pokemons',
+      limit: limit,
+      offset: offset,
+    );
 
     return maps.map((map) => Results.fromJson(map)).toList();
   }

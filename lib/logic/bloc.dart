@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/logic/api/pokemon_api.dart';
 import 'package:pokemons/logic/api/repository/database.dart';
@@ -9,6 +10,12 @@ class SuccessState extends ApiState {
   final FullInfo fullInfo;
 
   SuccessState(this.fullInfo);
+}
+
+class NoInternetSuccessState extends ApiState {
+  final List<Results> results;
+
+  NoInternetSuccessState(this.results);
 }
 
 class ErrorState extends ApiState {}
@@ -41,24 +48,37 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
     on<GetUrlEvent>(
       (event, emit) async {
         emit(LoadingState());
-        _results.clear();
-        final result =
-            await pokemonRepository.getInfo(event.offset, event.limit);
-        _results.addAll(result.pokemonApi.results);
-        for (var result in _results) {
-          final existingPokemon =
-              await pokeDatabase.getPokemonByName(result.name);
-          if (existingPokemon == null) {
-            await pokeDatabase.insertPokemon(result);
+        final connectivityResult = await Connectivity().checkConnectivity();
+        bool hasInternet = connectivityResult != ConnectivityResult.none;
+        bool noInternet = connectivityResult == ConnectivityResult.none;
+
+        if (hasInternet) {
+          _results.clear();
+          final result =
+              await pokemonRepository.getInfo(event.offset, event.limit);
+          _results.addAll(result.pokemonApi.results);
+          for (var result in _results) {
+            final existingPokemon =
+                await pokeDatabase.getPokemonByName(result.name);
+            if (existingPokemon == null) {
+              await pokeDatabase.insertPokemon(result);
+            }
           }
+          List<Results> pokemons = await pokeDatabase.getAllPokemons();
+          for (var pokemon in pokemons) {}
+          emit(SuccessState(result));
+        } else if (noInternet) {
+          final cachedResults = await pokeDatabase.getAllPokemons();
+          _results.addAll(cachedResults);
+          emit(
+            NoInternetSuccessState(_results),
+          );
+        } else {
+          emit(ErrorState());
         }
-        List<Results> pokemons = await pokeDatabase.getAllPokemons();
-        for (var pokemon in pokemons) {
-          print(pokemon);
-        }
-        emit(SuccessState(result));
       },
     );
+
     on<SearchEvent>(
       (event, emit) async {
         emit(LoadingState());

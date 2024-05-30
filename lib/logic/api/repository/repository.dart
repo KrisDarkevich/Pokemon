@@ -14,7 +14,7 @@ class PokemonRepository {
 }
 
 class FullInfo {
-  final OnePokemon onePokemon;
+  final OnePokemon? onePokemon;
   final PokemonApi pokemonApi;
 
   FullInfo(this.onePokemon, this.pokemonApi);
