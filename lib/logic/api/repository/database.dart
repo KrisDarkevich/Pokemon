@@ -27,9 +27,10 @@ class PokeDatabase {
 
   Future _createDB(Database db, int version) async {
     const textType = 'TEXT NOT NULL';
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
 
-    await db
-        .execute('''CREATE TABLE pokemons(name $textType, url $textType)''');
+    await db.execute(
+        '''CREATE TABLE pokemons(id $idType, name $textType, url $textType)''');
   }
 
   Future<int> create(Results pokemon) async {

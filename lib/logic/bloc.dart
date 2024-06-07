@@ -65,6 +65,7 @@ class ApiBloc extends Bloc<ApiEvent, ApiState> {
           }
           emit(SuccessState(result));
         } else if (!hasInternet) {
+          _results.clear();
           final cachedResults =
               await pokeDatabase.getPokemons(event.offset, event.limit);
           _results.addAll(cachedResults);

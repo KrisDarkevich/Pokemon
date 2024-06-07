@@ -6,6 +6,8 @@ import 'package:pokemons/constant/poke_style.dart';
 import 'package:pokemons/logic/api/pokemon_api.dart';
 import 'package:pokemons/logic/api/repository/database.dart';
 import 'package:pokemons/logic/bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pokemons/logic/list.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -38,11 +40,9 @@ class _StartScreenState extends State<StartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Pokemon list',
-          style: TextStyle(
-            color: PokeColor.white,
-          ),
+        title: Text(
+          AppLocalizations.of(context)!.pokemonList,
+          style: PokeStyle.titleName,
         ),
         centerTitle: true,
         backgroundColor: PokeColor.red,
@@ -118,17 +118,9 @@ class _StartScreenState extends State<StartScreen> {
                                       color: PokeColor.darkRed,
                                     ),
                                     errorWidget: (context, url, error) =>
-                                        const Row(
-                                      children: [
-                                        Icon(
-                                          Icons.error,
-                                          color: PokeColor.greyRed,
-                                        ),
-                                        Text(
-                                          'Image are not cached',
-                                          style: PokeStyle.noInternetImage,
-                                        )
-                                      ],
+                                        const Icon(
+                                      Icons.error,
+                                      color: PokeColor.greyRed,
                                     ),
                                   ),
                                 ],
@@ -161,6 +153,7 @@ class _StartScreenState extends State<StartScreen> {
                         style: PokeStyle.button,
                         onPressed: () {
                           index += 20;
+
                           return context.read<ApiBloc>().add(
                                 GetUrlEvent(index, 20),
                               );

@@ -17,4 +17,8 @@ abstract class PokeStyle {
   static const blockedButton = ButtonStyle(
     backgroundColor: MaterialStatePropertyAll<Color>(PokeColor.greyRed),
   );
+
+  static const titleName = TextStyle(
+    color: PokeColor.white,
+  );
 }

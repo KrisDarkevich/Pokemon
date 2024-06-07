@@ -3,6 +3,7 @@ import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
 import 'package:pokemons/widgets/random_screen.dart';
 import 'package:pokemons/widgets/start_screen.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomBar extends StatefulWidget {
   final PokemonRepository pokemonRepository;
@@ -36,14 +37,14 @@ class _BottomBarState extends State<BottomBar> {
             currentIndex: value,
             selectedItemColor: PokeColor.red,
             onTap: _onItemTapped,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
+                icon: const Icon(Icons.home),
+                label: AppLocalizations.of(context)!.homeBar,
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.question_mark),
-                label: 'Random',
+               BottomNavigationBarItem(
+                icon: const Icon(Icons.question_mark),
+                label: AppLocalizations.of(context)!.randomBar,
               ),
             ],
           ),
