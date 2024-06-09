@@ -6,10 +6,9 @@ import 'package:pokemons/constant/poke_style.dart';
 import 'package:pokemons/logic/bloc_random_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-// ignore: must_be_immutable
 class RandomScreen extends StatelessWidget {
-  RandomScreen({super.key});
-  int index = 0;
+  const RandomScreen({super.key});
+  static const int index = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -69,10 +68,6 @@ class RandomScreen extends StatelessWidget {
                                   Icons.error,
                                   color: PokeColor.greyRed,
                                 ),
-                                Text(
-                                  'Image are not cached',
-                                  style: PokeStyle.noInternetImage,
-                                )
                               ],
                             ),
                           )

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/constant/poke_style.dart';
+import 'package:pokemons/logic/bloc_locale.dart';
 import 'package:pokemons/logic/api/pokemon_api.dart';
 import 'package:pokemons/logic/api/repository/database.dart';
 import 'package:pokemons/logic/bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:pokemons/logic/list.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -46,6 +46,43 @@ class _StartScreenState extends State<StartScreen> {
         ),
         centerTitle: true,
         backgroundColor: PokeColor.red,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: const Text('English'),
+                          onTap: () {
+                            context
+                                .read<LocaleBloc>()
+                                .add(ChangeLocaleEvent('en'));
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Russian'),
+                          onTap: () {
+                            context
+                                .read<LocaleBloc>()
+                                .add(ChangeLocaleEvent('ru'));
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+            icon: const Icon(Icons.language),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(9),

@@ -42,15 +42,15 @@ class _BottomBarState extends State<BottomBar> {
                 icon: const Icon(Icons.home),
                 label: AppLocalizations.of(context)!.homeBar,
               ),
-               BottomNavigationBarItem(
+              BottomNavigationBarItem(
                 icon: const Icon(Icons.question_mark),
                 label: AppLocalizations.of(context)!.randomBar,
               ),
             ],
           ),
           body: Center(
-            child: [
-              const StartScreen(),
+            child: const [
+              StartScreen(),
               RandomScreen(),
             ].elementAt(value),
           ),
