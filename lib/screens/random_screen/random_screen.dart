@@ -2,16 +2,22 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
+import 'package:pokemons/constant/poke_image.dart';
 import 'package:pokemons/constant/poke_style.dart';
-import 'package:pokemons/logic/bloc_random_screen.dart';
+import 'package:pokemons/constant/poke_widgets.dart';
+import 'package:pokemons/screens/random_screen/bloc/bloc_event_random_screen.dart';
+import 'package:pokemons/screens/random_screen/bloc/bloc_random_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pokemons/screens/random_screen/bloc/bloc_state_random_screen.dart';
 
 class RandomScreen extends StatelessWidget {
   const RandomScreen({super.key});
-  static const int index = 0;
 
   @override
   Widget build(BuildContext context) {
+    const int maxPokemonId = 1302;
+    const int firstPokemonId = 0;
+    const int pokemonId = 3;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -45,7 +51,7 @@ class RandomScreen extends StatelessWidget {
                 builder: (_, state) {
                   if (state is SuccessRandomState) {
                     final imageId =
-                        Uri.parse(state.results.url).pathSegments[3];
+                        Uri.parse(state.results.url).pathSegments[pokemonId];
 
                     return Center(
                       child: Column(
@@ -56,8 +62,7 @@ class RandomScreen extends StatelessWidget {
                             style: PokeStyle.name,
                           ),
                           CachedNetworkImage(
-                            imageUrl:
-                                'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
+                            imageUrl: PokeImage().getPokemonPicture(imageId),
                             placeholder: (context, url) =>
                                 const CircularProgressIndicator(
                               color: PokeColor.darkRed,
@@ -84,9 +89,7 @@ class RandomScreen extends StatelessWidget {
                     );
                   } else {
                     return const Center(
-                      child: CircularProgressIndicator(
-                        color: PokeColor.darkRed,
-                      ),
+                      child: PokeWidgets.progressIndicator,
                     );
                   }
                 },
@@ -99,7 +102,7 @@ class RandomScreen extends StatelessWidget {
               style: PokeStyle.button,
               onPressed: () {
                 context.read<RandomBloc>().add(
-                      GetRandomPokeEvent(0, 1302),
+                      GetRandomPokeEvent(firstPokemonId, maxPokemonId),
                     );
               },
               child: Text(
@@ -112,33 +115,3 @@ class RandomScreen extends StatelessWidget {
     );
   }
 }
-
-
-
-//                           //
-//                           // 
-//
-//                            
-//                                         pokemonInfo
-//                                             .pokemonApi.results[index].name,
-//                                         style: PokeStyle.name,
-//                                       ),
-//                                     ),
-//                                     Image.network(
-//                                       'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
-//                                     ),
-//                                   ],
-//                                 ),
-//                               ),
-//                             ),
-//                           );
-//                         }),
-//                   );
-//                 } else {
-//                   return const CircularProgressIndicator(
-//                     color: PokeColor.darkRed,
-//                   );
-//                 }
-//               },
-//             ),
-//            

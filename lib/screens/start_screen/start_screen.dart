@@ -2,12 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokemons/constant/poke_color.dart';
+import 'package:pokemons/constant/poke_image.dart';
 import 'package:pokemons/constant/poke_style.dart';
-import 'package:pokemons/logic/bloc_locale.dart';
-import 'package:pokemons/logic/api/pokemon_api.dart';
-import 'package:pokemons/logic/api/repository/database.dart';
-import 'package:pokemons/logic/bloc.dart';
+import 'package:pokemons/constant/poke_widgets.dart';
+import 'package:pokemons/l10n/bloc/bloc_locale.dart';
+import 'package:pokemons/logic/api/models/one_pokemon.dart';
+import 'package:pokemons/logic/database.dart';
+import 'package:pokemons/screens/start_screen/bloc/bloc_start_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:pokemons/screens/start_screen/bloc/bloc_state_start_screen.dart';
+import 'package:pokemons/screens/start_screen/bloc/bloc_event_start_screen.dart';
 
 class StartScreen extends StatefulWidget {
   const StartScreen({super.key});
@@ -19,7 +23,7 @@ class StartScreen extends StatefulWidget {
 class _StartScreenState extends State<StartScreen> {
   final TextEditingController _controller = TextEditingController();
   int index = 0;
-  late Future<List<Results>> pokemons;
+  late Future<List<OnePokemon>> pokemons;
   late PokeDatabase pokeDatabase;
 
   @override
@@ -27,7 +31,7 @@ class _StartScreenState extends State<StartScreen> {
     super.initState();
 
     pokeDatabase = PokeDatabase.instance;
-    pokemons = pokeDatabase.allPokemon();
+    pokemons = pokeDatabase.getPokemonList();
   }
 
   @override
@@ -38,6 +42,7 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const int offset = 20;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -149,7 +154,7 @@ class _StartScreenState extends State<StartScreen> {
                                   ),
                                   CachedNetworkImage(
                                     imageUrl:
-                                        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$imageId.png',
+                                        PokeImage().getPokemonPicture(imageId),
                                     placeholder: (context, url) =>
                                         const CircularProgressIndicator(
                                       color: PokeColor.darkRed,
@@ -170,14 +175,14 @@ class _StartScreenState extends State<StartScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FilledButton(
-                        style: index < 20
+                        style: index < offset
                             ? PokeStyle.blockedButton
                             : PokeStyle.button,
                         onPressed: () {
-                          if (index >= 20) {
-                            index -= 20;
+                          if (index >= offset) {
+                            index -= offset;
                             return context.read<ApiBloc>().add(
-                                  GetUrlEvent(index, 20),
+                                  GetUrlEvent(index, offset),
                                 );
                           }
                         },
@@ -189,10 +194,10 @@ class _StartScreenState extends State<StartScreen> {
                       FilledButton(
                         style: PokeStyle.button,
                         onPressed: () {
-                          index += 20;
+                          index += offset;
 
                           return context.read<ApiBloc>().add(
-                                GetUrlEvent(index, 20),
+                                GetUrlEvent(index, offset),
                               );
                         },
                         child: const Icon(Icons.arrow_forward_ios),
@@ -201,11 +206,42 @@ class _StartScreenState extends State<StartScreen> {
                   ),
                 ],
               );
+            } else if (state is ErrorState) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error,
+                      color: PokeColor.darkRed,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      AppLocalizations.of(context)!.networkError,
+                      style: PokeStyle.name,
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    FilledButton(
+                      style: PokeStyle.button,
+                      onPressed: () {
+                        return context.read<ApiBloc>().add(
+                              GetUrlEvent(index, offset),
+                            );
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.tryAgain,
+                      ),
+                    ),
+                  ],
+                ),
+              );
             } else {
               return const Center(
-                child: CircularProgressIndicator(
-                  color: PokeColor.darkRed,
-                ),
+                child: PokeWidgets.progressIndicator,
               );
             }
           },

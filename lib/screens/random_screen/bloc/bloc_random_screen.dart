@@ -1,31 +1,11 @@
 import 'dart:math';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pokemons/logic/api/pokemon_api.dart';
-import 'package:pokemons/logic/api/repository/database.dart';
+import 'package:pokemons/logic/database.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
-
-abstract class RandomState {}
-
-class SuccessRandomState extends RandomState {
-  final Results results;
-
-  SuccessRandomState(this.results);
-}
-
-class LoadingRandomState extends RandomState {}
-
-class InitialRandomState extends RandomState {}
-
-abstract class RandomEvent {}
-
-class GetRandomPokeEvent extends RandomEvent {
-  final int offset;
-  final int limit;
-
-  GetRandomPokeEvent(this.offset, this.limit);
-}
+import 'package:pokemons/screens/random_screen/bloc/bloc_event_random_screen.dart';
+import 'package:pokemons/screens/random_screen/bloc/bloc_state_random_screen.dart';
+import 'package:pokemons/services/connection_service.dart';
 
 class RandomBloc extends Bloc<RandomEvent, RandomState> {
   final PokemonRepository pokemonRepository;
@@ -35,8 +15,8 @@ class RandomBloc extends Bloc<RandomEvent, RandomState> {
       : super(InitialRandomState()) {
     on<GetRandomPokeEvent>(
       (event, emit) async {
-        final connectivityResult = await Connectivity().checkConnectivity();
-        bool hasInternet = connectivityResult != ConnectivityResult.none;
+        final hasInternet = await ConnectionService().hasInternet();
+
         Random randomClass = Random();
 
         emit(LoadingRandomState());

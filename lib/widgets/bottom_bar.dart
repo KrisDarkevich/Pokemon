@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pokemons/constant/poke_color.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
-import 'package:pokemons/widgets/random_screen.dart';
-import 'package:pokemons/widgets/start_screen.dart';
+import 'package:pokemons/screens/random_screen/random_screen.dart';
+import 'package:pokemons/screens/start_screen/start_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BottomBar extends StatefulWidget {

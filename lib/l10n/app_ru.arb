@@ -4,5 +4,7 @@
     "randomBar": "Рандом",
     "yourPokemon": "Ваш покемон...",
     "getPokemon": "Получить покемона!",
-    "getRandomPokemon": "Получить случайного покемона"
+    "getRandomPokemon": "Получить случайного покемона",
+    "networkError": "Ошибка сети",
+    "tryAgain": "Попробовать снова"
 }

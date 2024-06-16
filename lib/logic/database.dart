@@ -1,16 +1,17 @@
-import 'package:pokemons/logic/api/pokemon_api.dart';
+import 'package:pokemons/logic/api/models/one_pokemon.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 class PokeDatabase {
   static final PokeDatabase instance = PokeDatabase._init();
   static Database? _database;
+  static const String dbName = 'pokemons';
 
   PokeDatabase._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('pokemons.db');
+    _database = await _initDB('$dbName.db');
     return _database!;
   }
 
@@ -33,62 +34,62 @@ class PokeDatabase {
         '''CREATE TABLE pokemons(id $idType, name $textType, url $textType)''');
   }
 
-  Future<int> create(Results pokemon) async {
+  Future<int> create(OnePokemon pokemon) async {
     final db = await instance.database;
-    return await db.insert('pokemons', pokemon.toMap());
+    return await db.insert(dbName, pokemon.toMap());
   }
 
-  Future<List<Results>> allPokemon() async {
+  Future<List<OnePokemon>> getPokemonList() async {
     final db = await instance.database;
-    final result = await db.query('pokemons');
+    final result = await db.query(dbName);
 
     return result
         .map(
-          (json) => Results(json['name'] as String, json['url'] as String),
+          (json) => OnePokemon(json['name'] as String, json['url'] as String),
         )
         .toList();
   }
 
-  Future<Results?> getPokemonByName(String name) async {
+  Future<OnePokemon?> getPokemonByName(String name) async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
-      'pokemons',
+      dbName,
       where: 'name = ?',
       whereArgs: [name],
     );
 
     if (maps.isNotEmpty) {
-      return Results.fromJson(maps.first);
+      return OnePokemon.fromJson(maps.first);
     } else {
       return null;
     }
   }
 
-  Future<void> insertPokemon(Results pokemon) async {
+  Future<void> insertPokemon(OnePokemon pokemon) async {
     final db = await instance.database;
     await db.insert(
-      'pokemons',
+      dbName,
       pokemon.toMap(),
       conflictAlgorithm: ConflictAlgorithm.ignore,
     );
   }
 
-  Future<List<Results>> getAllPokemons() async {
+  Future<List<OnePokemon>> getAllPokemons() async {
     final db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db.query('pokemons');
+    final List<Map<String, dynamic>> maps = await db.query(dbName);
 
-    return maps.map((map) => Results.fromJson(map)).toList();
+    return maps.map((map) => OnePokemon.fromJson(map)).toList();
   }
 
-  Future<List<Results>> getPokemons(int offset, int limit) async {
+  Future<List<OnePokemon>> getPokemons(int offset, int limit) async {
     final db = await instance.database;
     final List<Map<String, dynamic>> maps = await db.query(
-      'pokemons',
+      dbName,
       limit: limit,
       offset: offset,
     );
 
-    return maps.map((map) => Results.fromJson(map)).toList();
+    return maps.map((map) => OnePokemon.fromJson(map)).toList();
   }
 
   Future close() async {

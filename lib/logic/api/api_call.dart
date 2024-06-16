@@ -1,55 +1,35 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:pokemons/logic/api/pokemon_api.dart';
+import 'package:pokemons/logic/api/models/base_experience.dart';
+import 'package:pokemons/logic/api/models/pokemon_list.dart';
 
 class ApiCall {
-  static const domain = 'https://pokeapi.co/api/v2';
+  static const _domain = 'https://pokeapi.co/api/v2';
   final HttpClient client;
 
   ApiCall(this.client);
 
-  Future<PokemonApi> getPokeList(int offset, int limit) async {
+  Future<PokemonList> getPokeList(int offset, int limit) async {
     final response = await http.get(
-      Uri.parse('$domain/pokemon/?offset=$offset&limit=$limit'),
+      Uri.parse('$_domain/pokemon/?offset=$offset&limit=$limit'),
     );
 
     final json = jsonDecode(response.body);
-    final info = PokemonApi.fromJson(json);
+    final info = PokemonList.fromJson(json);
 
     return info;
   }
 
-  Future<OnePokemon> getInfoOfOne() async {
-    final Uri url = Uri.parse('$domain/pokemon/2/');
+  Future<BaseExperience> getInfoOfOne() async {
+    const int testPokemonId = 2;
+    final Uri url = Uri.parse('$_domain/pokemon/$testPokemonId/');
 
     final response = await http.get(url);
 
     final json = jsonDecode(response.body);
-    final info = OnePokemon.fromJson(json);
+    final info = BaseExperience.fromJson(json);
 
     return info;
   }
-
-  // Future<Int> getIdNomber() async {
-  //   final Uri url = Uri.parse('$domain/pokemon/2/');
-
-  //   final response = await http.get(url);
-
-  //   final json = jsonDecode(response.body);
-  //   final info = OnePokemon.fromJson(json);
-
-  //   return info;
-  // }
 }
-
-
-    // print(url.pathSegments[3]);
-    //  final int index;
-    // index = 1;
-        //// final Uri url = Uri.parse('$domain/pokemon/34/');
-
-       // // print(url.pathSegments[3]);
-
-
-// https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/35.png

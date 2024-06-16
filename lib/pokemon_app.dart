@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pokemons/logic/bloc_locale.dart';
-import 'package:pokemons/logic/api/repository/database.dart';
+import 'package:pokemons/l10n/bloc/bloc_locale.dart';
+import 'package:pokemons/logic/database.dart';
 import 'package:pokemons/logic/api/repository/repository.dart';
-import 'package:pokemons/logic/bloc.dart';
-import 'package:pokemons/logic/bloc_random_screen.dart';
+import 'package:pokemons/screens/start_screen/bloc/bloc_start_screen.dart';
+import 'package:pokemons/screens/random_screen/bloc/bloc_random_screen.dart';
+import 'package:pokemons/screens/start_screen/bloc/bloc_event_start_screen.dart';
 import 'package:pokemons/widgets/bottom_bar.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,7 +20,7 @@ class PokemonApp extends StatelessWidget {
   final PokeDatabase pokeDatabase;
 
   static const _firstPokemonIndex = 0;
-  static const _ofssetPokemonIndex = 20;
+  static const _offsetPokemonIndex = 20;
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -33,9 +34,6 @@ class PokemonApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-
-            //зафигачить блок новый, обернуть в него MAterial app, и там уже трали-вали.
-            // locale: Locale('ru'),
             locale: Locale(state.locale),
             supportedLocales: const [
               Locale('en'),
@@ -49,7 +47,7 @@ class PokemonApp extends StatelessWidget {
                     ..add(
                       GetUrlEvent(
                         _firstPokemonIndex,
-                        _ofssetPokemonIndex,
+                        _offsetPokemonIndex,
                       ),
                     ),
                 ),
