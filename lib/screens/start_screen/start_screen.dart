@@ -42,9 +42,12 @@ class _StartScreenState extends State<StartScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     const int offset = 20;
     return Scaffold(
+      key: const Key('StartScreen'),
       appBar: AppBar(
+        key: const Key('appBar'),
         title: Text(
           AppLocalizations.of(context)!.pokemonList,
           style: PokeStyle.titleName,
@@ -53,6 +56,7 @@ class _StartScreenState extends State<StartScreen> {
         backgroundColor: PokeColor.red,
         actions: [
           IconButton(
+            key: const Key('iconButtonLocale'),
             onPressed: () {
               showDialog(
                 context: context,
@@ -71,6 +75,7 @@ class _StartScreenState extends State<StartScreen> {
                           },
                         ),
                         ListTile(
+                          key: const Key('switchToRussian'),
                           title: const Text('Russian'),
                           onTap: () {
                             context
