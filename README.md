@@ -1,16 +1,26 @@
-# pokemons
+# Pokemons
+Приложение для просмотра покемонов, работающее с PokeApi
 
-A new Flutter project.
+### Функционал
 
-## Getting Started
+- поиск покемонов по названию
+- рандомайзер покемонов
+- локализация на русский и английский 
+- онлайн и офлайн режимы
+- кеширование данных просмотренных покемонов 
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Ззависимости проекта
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- [json annotation](https://pub.dev/packages/json_annotation)
+- [json serializable](https://pub.dev/packages/json_serializable)
+- [flutterbloc](https://pub.dev/packages/flutter_bloc)
+- [http](https://pub.dev/packages/http)
+- [cached network image](https://pub.dev/packages/cached_network_image)
+- [flutter localizations](https://pub.dev/packages/flutter_localization)
+- [intl](https://pub.dev/packages/intl)
+- [sqflite](https://pub.dev/packages/sqflite)
+- [connectivity plus](https://pub.dev/packages/connectivity_plus)
+
+
